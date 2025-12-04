@@ -1,0 +1,79 @@
+import unittest
+from htmlnode import HTMLNode
+from textnode import TextNode, TextType
+from leafnode import LeafNode
+from htmlnode_test_cases import test_suite
+
+print(f"=================================================== BEGIN HTMLNODE TEST ===============================================")
+class TestHTMLNode(unittest.TestCase):
+    def test_repr(self): 
+        test_function = "test_repr"
+        print(f"--------------------------- {test_function} --------------------------")
+        test_cases = test_suite[test_function]
+
+        for test_case in test_cases:
+            desc, node = test_case
+            print(desc)
+            print(node)
+            print(f"node.props_to_html(): {node.props_to_html()}")
+            print("")
+    
+        test_function = "test_init"
+        print(f"--------------------------- {test_function} -----------------------------------------------------------------------------\n")
+        test_cases = test_suite[test_function]
+
+        for test_case in test_cases:
+            desc, node, inputs = test_case
+            print(desc)
+            print(node)
+
+        test_function = "test_leaf"
+        print(f"\n\n\n")
+        print(f"--------------------------- {test_function} -----------------------------------------------------------------------------\n")
+        test_cases = test_suite[test_function]
+
+        for test_case in test_cases:
+            # Unpack test case tuple
+            desc, node, inputs = test_case
+
+            # Make input strings from inputs tuple
+            input_strings = []
+            for item in inputs:
+                if isinstance(item, HTMLNode) or isinstance(item, LeafNode):
+                    input_add = f"'{type(item)}'"
+                elif isinstance(item, str):
+                    input_add = f'"{item}"'
+                else: 
+                    input_add = f'{item}'
+                input_strings.append(input_add)
+            input_case_string = "(" + ", ".join(input_strings) + ")"
+            test_command_string = "LeafNode" + input_case_string
+
+            if not node.value:
+                test_case_string = "All leaf nodes must have a value"
+            if not node.tag:
+                test_case_string = node.value
+            else:
+                props_string = ""
+                if node.props:
+                    props_string = node.props_to_html
+                test_case_string = f"<{node.tag}{props_string}>{node.value}</{node.tag}"
+
+            # Report
+            print(f"test description: {desc}")
+            print(f"test command:     {test_command_string}")
+            print(f"output type:      {type(node)}")
+            print(f"object props:     {list(node.__dict__.keys())}")
+            print(f"object props:     {node.__dict__}")
+            print(f".to_html():       {node.to_html()}")
+            print(f"test_case_string: {test_case_string}")
+            print("")
+            
+            self.assertEqual(node.to_html(), test_case_string)
+
+
+
+if __name__=="__main__":
+    unittest.main()
+
+
